@@ -1,10 +1,10 @@
-module Render(Window,defaultWindow,samples,render) where
+module Render(Window, defaultWindow, samples, render) where
 import Ansi
 import Shapes
 
 --  A window specifies what part of the world to render and at which
 --  resolution.
---  Values are top left & bottom right corner to be rendered, 
+--  Values are top left & bottom right corner to be rendered,
 --             and the size of the output device to render into
 data Window = Window Point Point (Int,Int)
 
@@ -28,7 +28,7 @@ pixels :: Window -> [[Point]]
 pixels (Window p0 p1 (w,h)) =
   [ [ point x y | x <- samples (getX p0) (getX p1) w ]
                 | y <- reverse $ samples (getY p0) (getY p1) h
-  ] 
+  ]
 
 -- generate list of all screen coordinates in window
 coords :: Window -> [[(Int,Int)]]
@@ -37,7 +37,7 @@ coords (Window _ _ (w,h)) = [ [(x,y) | x <- [0..w]] | y <- [0..h] ]
 -- render a drawing into a window
 render :: Window -> Drawing -> IO ()
 render win sh =  sequence_ $ map pix locations
-  where 
+  where
     pix (p,(x,y)) | p `inside` sh = goto x y  >> putStr "*"
                   | otherwise     = return ()
     -- locations is a list of abstract coords ("pixels") and

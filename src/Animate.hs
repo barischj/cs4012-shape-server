@@ -15,7 +15,7 @@ animate win t0 t1 ss = mapM_ display frames
     ts     = samples t0 t1 (round $ (t1 - t0) * 10)  -- we generate 10 fps
     frames = map (sample ss) ts
     display sh = do
-      cls
+      clear
       render win sh
       usleep 70000  -- sleeping removes flickering
 

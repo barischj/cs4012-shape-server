@@ -1,14 +1,12 @@
 module Ansi where
 
-data Colour = Black | Red | Green | Yellow | Blue | Magenta | Cyan | White
-  deriving (Eq,Show,Enum)
+import Colours
 
-cls :: IO ()
-cls = putStr "\ESC[2J"
+clear :: IO ()
+clear = putStr "\ESC[2J"
 
 goto :: Int -> Int -> IO ()
-goto x y    = putStr $ "\ESC[" ++ show y ++ ";" ++ show x ++ "H"
+goto x y = putStr $ concat ["\ESC[", show y, ";", show x, "H"]
 
 color :: Colour -> String -> IO ()
-color c s = putStr $ "\ESC[3" ++ show (fromEnum c) ++ "m" ++ s ++ "\ESC[0m"
-
+color c s = putStr $ concat ["\ESC[3", show (fromEnum c), "m", s, "\ESC[0m"]

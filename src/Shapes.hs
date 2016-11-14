@@ -1,15 +1,10 @@
-module Shapes(
-  Shape, Point, Vector, Transform, Drawing,
-  point, getX, getY,
-  empty, circle, square,
-  identity, translate, rotate, scale, (<+>),
-  inside)  where
+module Shapes where
 
+import Colours
 
 -- Utilities
 
-data Vector = Vector Double Double
-              deriving Show
+data Vector = Vector Double Double deriving Show
 vector = Vector
 
 cross :: Vector -> Vector -> Double
@@ -19,12 +14,12 @@ mult :: Matrix -> Vector -> Vector
 mult (Matrix r0 r1) v = Vector (cross r0 v) (cross r1 v)
 
 invert :: Matrix -> Matrix
-invert (Matrix (Vector a b) (Vector c d)) = matrix (d / k) (-b / k) (-c / k) (a / k)
-  where k = a * d - b * c
-        
+invert (Matrix (Vector a b) (Vector c d)) =
+    matrix (d / k) (-b / k) (-c / k) (a / k)
+    where k = a * d - b * c
+
 -- 2x2 square matrices are all we need.
-data Matrix = Matrix Vector Vector
-              deriving Show
+data Matrix = Matrix Vector Vector deriving Show
 
 matrix :: Double -> Double -> Double -> Double -> Matrix
 matrix a b c d = Matrix (Vector a b) (Vector c d)
@@ -34,31 +29,21 @@ getY (Vector x y) = y
 
 -- Shapes
 
-type Point  = Vector
+type Point = Vector
 
 point :: Double -> Double -> Point
 point = vector
 
-
-data Shape = Empty 
-           | Circle 
-           | Square
-             deriving Show
-
-empty, circle, square :: Shape
-
-empty = Empty
-circle = Circle
-square = Square
+data Shape = Empty | Circle | Square deriving Show
 
 -- Transformations
 
 data Transform = Identity
-           | Translate Vector
-           | Scale Vector
-           | Compose Transform Transform
-           | Rotate Matrix
-             deriving Show
+    | Translate Vector
+    | Scale Vector
+    | Compose Transform Transform
+    | Rotate Matrix
+    deriving Show
 
 identity = Identity
 translate = Translate
@@ -73,28 +58,29 @@ transform (Scale (Vector tx ty))     (Vector px py)  = Vector (px / tx)  (py / t
 transform (Rotate m)                 p = (invert m) `mult` p
 transform (Compose t1 t2)            p = transform t2 $ transform t1 p
 
+-- Style
+
+data Style = Width Int | Fill Colour | Stroke Colour
+
 -- Drawings
 
-type Drawing = [(Transform,Shape)]
+type Drawing = [(Transform, Shape, [Style])]
 
 -- interpretation function for drawings
 
 inside :: Point -> Drawing -> Bool
-inside p d = or $ map (inside1 p) d
+inside p drawing = or $ map (inside1 p) drawing
 
-inside1 :: Point -> (Transform, Shape) -> Bool
-inside1 p (t,s) = insides (transform t p) s
+inside1 :: Point -> (Transform, Shape, [Style]) -> Bool
+inside1 p (t,s, _) = insides (transform t p) s
 
 insides :: Point -> Shape -> Bool
-p `insides` Empty = False
+p `insides` Empty  = False
 p `insides` Circle = distance p <= 1
 p `insides` Square = maxnorm  p <= 1
 
-
 distance :: Point -> Double
-distance (Vector x y ) = sqrt ( x**2 + y**2 )
+distance (Vector x y) = sqrt (x**2 + y**2)
 
 maxnorm :: Point -> Double
-maxnorm (Vector x y ) = max (abs x) (abs y)
-
-testShape = (scale (point 10 10), circle)
+maxnorm (Vector x y) = max (abs x) (abs y)

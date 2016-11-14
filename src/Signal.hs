@@ -1,11 +1,7 @@
 -- A very simple library for manipulating continuous signals.
---
 
-module Signal (Time, Signal,      
-               timeS,     
-               mapT,  
-               sample )  
-       where
+module Signal (Time, Signal, timeS, mapT, sample) where
+
 import Control.Monad (forM_)
 
 -- Shallow embedding
@@ -35,9 +31,8 @@ mapT f xs = Signal $ \t -> xs `at` (f t)
 --  = Signal (at xs . f)
 -- which I'm sure you'll agree is much neater!
 
-
 -- Sampling a signal at a given time point.
 -- This is the /semantic function/ of our library.
-sample :: Signal a -> Time -> a  
+sample :: Signal a -> Time -> a
 sample = at
 

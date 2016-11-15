@@ -1,6 +1,6 @@
 module Main where
 
-import Example
+import Shapes
 
 main :: IO ()
-main = runExample
+main = putStrLn "Running"

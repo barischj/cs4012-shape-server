@@ -3,4 +3,4 @@ module Main where
 import Shapes
 
 main :: IO ()
-main = putStrLn "Running"
+main = putStrLn $ show _example

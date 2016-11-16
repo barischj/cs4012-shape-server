@@ -1,6 +1,6 @@
 module Main where
 
-import Shapes
+import           Shapes
 
 main :: IO ()
-main = putStrLn $ show _example
+main = print _example

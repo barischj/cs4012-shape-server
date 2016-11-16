@@ -1,7 +1,7 @@
 module Shapes where
 
 -- Example of a parsed `Drawing`.
-_example = read $ "[(Identity, Circle, [FillColor \"#123456\"])]" :: Drawing
+_example = read "[(Identity, Circle, [FillColor \"#123456\"])]" :: Drawing
 
 -- A `Colour` may be any string, hex or otherwise.
 type Colour = String

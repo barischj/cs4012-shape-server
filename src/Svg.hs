@@ -8,11 +8,6 @@ import qualified Text.Blaze.Internal         as I
 import           Text.Blaze.Svg11            hiding (style)
 import qualified Text.Blaze.Svg11.Attributes as A
 
-shapeToSvg :: Shape -> Svg
-shapeToSvg Empty  = I.Empty
-shapeToSvg Circle = circle
-shapeToSvg Square = rect
-
 -- Useful for partially applying an argument to `!` in reverse order.
 apply = flip (!)
 
@@ -36,10 +31,15 @@ transformSvg (Scale v)       = apply $ A.transform $ scale     (getX v) (getY v)
 transformSvg (Compose t1 t2) = transformSvg t2 . transformSvg t1
 transformSvg (Rotate a)      = apply $ A.transform $ rotate a
 
-drawing :: Drawing -> Svg
-drawing [] = I.Empty
+shapeToSvg :: Shape -> Svg
+shapeToSvg Empty  = I.Empty
+shapeToSvg Circle = circle
+shapeToSvg Square = rect
+
+drawingToSvg :: Drawing -> Svg
+drawingToSvg [] = I.Empty
 drawing ((transform, shape, styles):xs) =
     let shapeSvg    = shapeToSvg shape
         transformed = transformSvg transform shapeSvg
         styled      = foldr styleSvg transformed styles
-    in styled `mappend` drawing xs
+    in styled `mappend` drawingToSvg xs

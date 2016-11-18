@@ -13,8 +13,8 @@ data Rgb = Rgb Int Int Int
 instance Read Rgb where
     readsPrec _ input = do
         ([h], r1:r2:g1:g2:b1:b2:rest) <- lex input
-        [(Rgb (read [r1,r2]) (read [g1,g2]) (read [b1,b2]), rest)
-         | h == '#' && all Ch.isDigit [r1,r2,g1,g2,b1,b2]]
+        [(Rgb (read [r1, r2]) (read [g1, g2]) (read [b1, b2]), rest)
+         | h == '#' && all Ch.isDigit [r1, r2, g1, g2, b1, b2]]
 
 -- |Show an RGB value in the format #123456.
 instance Show Rgb where

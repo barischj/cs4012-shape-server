@@ -40,8 +40,8 @@ shapeToSvg Square = rect
 -- |Converts a `Drawing` to the corresponding `Svg`.
 drawingToSvg :: Drawing -> Svg
 drawingToSvg [] = I.Empty
-drawing ((transform, shape, styles):xs) =
-    let shapeSvg    = shapeToSvg shape
-        transformed = transformSvg transform shapeSvg
-        styled      = foldr styleSvg transformed styles
-    in styled `mappend` drawingToSvg xs
+drawingToSvg ((transform, shape, styles):xs) =
+    let shapeSvg       = shapeToSvg shape
+        transformedSvg = transformSvg transform shapeSvg
+        styledSvg      = foldr styleSvg transformedSvg styles
+    in styledSvg `mappend` drawingToSvg xs

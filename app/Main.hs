@@ -1,6 +1,6 @@
 module Main where
 
-import           Shapes
+import           Server
 
 main :: IO ()
-main = print _example
+main = start

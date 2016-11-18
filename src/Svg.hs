@@ -9,21 +9,21 @@ import qualified Text.Blaze.Svg11.Attributes as A
 -- |Useful for partially applying an argument to `!` in reverse order.
 apply = flip (!)
 
--- |Applies a `Style` to an `Svg`. The `Style` is given as an
--- `AttributeValue -> Attribute` e.g. `A.height` and the `AttributeValue` is
+-- |Applies an attribute to an `Svg`. The attribute is given as an
+-- `AttributeValue -> Attribute` e.g. `A.height` and an `AttributeValue`
 -- derived from an instance of `Show` e.g. `5`.
-applyStyle :: Show a => (AttributeValue -> Attribute) -> a -> Svg -> Svg
-applyStyle ava a = apply $ ava $ I.stringValue $ show a
+applyAttr :: Show a => (AttributeValue -> Attribute) -> a -> Svg -> Svg
+applyAttr ava a = apply $ ava $ I.stringValue $ show a
 
--- |Returns an `Svg` with a `Style` applied.
+-- |Applies a `Style` to an `Svg`.
 styleSvg :: Style -> Svg -> Svg
-styleSvg (FillColor   c) = applyStyle A.fill        c
-styleSvg (Height      h) = applyStyle A.height      h
-styleSvg (StrokeColor c) = applyStyle A.stroke      c
-styleSvg (StrokeWidth w) = applyStyle A.strokeWidth w
-styleSvg (Width       w) = applyStyle A.width       w
+styleSvg (FillColor   c) = applyAttr A.fill        c
+styleSvg (Height      h) = applyAttr A.height      h
+styleSvg (StrokeColor c) = applyAttr A.stroke      c
+styleSvg (StrokeWidth w) = applyAttr A.strokeWidth w
+styleSvg (Width       w) = applyAttr A.width       w
 
--- |Returns an `Svg` with a `Transform` applied.
+-- |Applies a `Transform` to an `Svg`.
 transformSvg :: Transform -> Svg -> Svg
 transformSvg Identity        = id
 transformSvg (Translate v)   = apply $ A.transform $ translate (getX v) (getY v)
@@ -31,12 +31,13 @@ transformSvg (Scale v)       = apply $ A.transform $ scale     (getX v) (getY v)
 transformSvg (Compose t1 t2) = transformSvg t2 . transformSvg t1
 transformSvg (Rotate a)      = apply $ A.transform $ rotate a
 
--- |Returns the `Svg` corresponding to a `Shape`.
+-- |Converts a `Shape` to the corresponding `Svg`.
 shapeToSvg :: Shape -> Svg
 shapeToSvg Empty  = I.Empty
 shapeToSvg Circle = circle
 shapeToSvg Square = rect
 
+-- |Converts a `Drawing` to the corresponding `Svg`.
 drawingToSvg :: Drawing -> Svg
 drawingToSvg [] = I.Empty
 drawing ((transform, shape, styles):xs) =

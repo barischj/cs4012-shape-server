@@ -3,7 +3,11 @@ module Shapes where
 import qualified Data.Char as Ch
 
 -- |Example of a parsed `Drawing`.
-_example = read "[(Identity, Circle, [FillColor #123456])]" :: Drawing
+_example =
+    read $ "[ (Identity, Circle, [CX 5, CY 5, R 5, FillColor #123456]), " ++
+            " (Rotate (Matrix (Vector 1 1) (Vector 1 1)), Empty, []), " ++
+            " (Compose Identity (Scale (Vector 1 1)), Square, [Width 5]) ]"
+            :: Drawing
 
 -- |An RGB data type represented by three `Int`s.
 -- The instance `Read RGB` ensures the `Int`s are in range.
@@ -20,9 +24,7 @@ instance Read Rgb where
 instance Show Rgb where
     show (Rgb r g b) = "#" ++ concatMap show [r, g, b]
 
-data Vector = Vector { getX :: Double, getY :: Double } deriving (Read, Show)
-
-data Matrix = Matrix Vector Vector deriving (Read, Show)
+data Vector = Vector Double Double deriving (Read, Show)
 
 data Shape = Empty | Circle | Square deriving (Read, Show)
 
@@ -31,11 +33,13 @@ data Transform =
     | Translate Vector
     | Scale     Vector
     | Compose   Transform Transform
-    | Rotate    Matrix
+    | Rotate    Double
     deriving (Read, Show)
 
 data Style =
-      X           Int
+      CX          Int
+    | CY          Int
+    | X           Int
     | Y           Int
     | R           Int
     | Width       Int

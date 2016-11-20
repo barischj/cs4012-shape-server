@@ -19,22 +19,24 @@ applyAttr ava a = apply $ ava $ I.stringValue $ show a
 
 -- |Applies a `Style` to an `Svg`.
 styleSvg :: Style -> Svg -> Svg
-styleSvg (X           x) = applyAttr A.x           x
-styleSvg (Y           y) = applyAttr A.y           y
-styleSvg (R           r) = applyAttr A.r           r
-styleSvg (FillColor   c) = applyAttr A.fill        c
-styleSvg (Height      h) = applyAttr A.height      h
-styleSvg (StrokeColor c) = applyAttr A.stroke      c
-styleSvg (StrokeWidth w) = applyAttr A.strokeWidth w
-styleSvg (Width       w) = applyAttr A.width       w
+styleSvg (CX          cx) = applyAttr A.cx          cx
+styleSvg (CY          cy) = applyAttr A.cy          cy
+styleSvg (X           x)  = applyAttr A.x           x
+styleSvg (Y           y)  = applyAttr A.y           y
+styleSvg (R           r)  = applyAttr A.r           r
+styleSvg (FillColor   c)  = applyAttr A.fill        c
+styleSvg (Height      h)  = applyAttr A.height      h
+styleSvg (StrokeColor c)  = applyAttr A.stroke      c
+styleSvg (StrokeWidth w)  = applyAttr A.strokeWidth w
+styleSvg (Width       w)  = applyAttr A.width       w
 
 -- |Applies a `Transform` to an `Svg`.
 transformSvg :: Transform -> Svg -> Svg
-transformSvg Identity        = id
-transformSvg (Translate v)   = apply $ A.transform $ translate (getX v) (getY v)
-transformSvg (Scale v)       = apply $ A.transform $ scale     (getX v) (getY v)
-transformSvg (Compose t1 t2) = transformSvg t2 . transformSvg t1
-transformSvg (Rotate a)      = apply $ A.transform $ rotate a
+transformSvg Identity                 = id
+transformSvg (Translate (Vector x y)) = apply $ A.transform $ translate x y
+transformSvg (Scale     (Vector x y)) = apply $ A.transform $ scale x y
+transformSvg (Compose t1 t2)          = transformSvg t2 . transformSvg t1
+transformSvg (Rotate a)               = apply $ A.transform $ rotate a
 
 -- |Converts a `Shape` to the corresponding `Svg`.
 shapeToSvg :: Shape -> Svg
@@ -54,4 +56,4 @@ drawingToSvg ((transform, shape, styles):xs) =
 -- |Renders an `Svg` in valid HTML of given size in pixels.
 renderSvg :: Int -> Int -> Svg -> Text
 renderSvg w h svg_ = R.renderSvg $ foldr ($) (docTypeSvg svg_)
-                    [applyAttr A.width w, applyAttr A.height h]
+                         [applyAttr A.width w, applyAttr A.height h]

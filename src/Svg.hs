@@ -17,6 +17,9 @@ applyAttr ava a = apply $ ava $ I.stringValue $ show a
 
 -- |Applies a `Style` to an `Svg`.
 styleSvg :: Style -> Svg -> Svg
+styleSvg (X           x) = applyAttr A.x           x
+styleSvg (Y           y) = applyAttr A.y           y
+styleSvg (R           r) = applyAttr A.r           r
 styleSvg (FillColor   c) = applyAttr A.fill        c
 styleSvg (Height      h) = applyAttr A.height      h
 styleSvg (StrokeColor c) = applyAttr A.stroke      c

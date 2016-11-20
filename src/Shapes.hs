@@ -35,7 +35,10 @@ data Transform =
     deriving (Read, Show)
 
 data Style =
-      Width       Int
+      X           Int
+    | Y           Int
+    | R           Int
+    | Width       Int
     | Height      Int
     | FillColor   Rgb
     | StrokeColor Rgb

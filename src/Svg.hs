@@ -1,10 +1,12 @@
 module Svg where
 
-import           Data.Foldable               ()
+import           Data.Foldable                ()
+import           Data.Text.Lazy               (Text)
 import           Shapes
-import qualified Text.Blaze.Internal         as I
-import           Text.Blaze.Svg11            hiding (style)
-import qualified Text.Blaze.Svg11.Attributes as A
+import qualified Text.Blaze.Internal          as I
+import qualified Text.Blaze.Svg.Renderer.Text as R
+import           Text.Blaze.Svg11             hiding (style)
+import qualified Text.Blaze.Svg11.Attributes  as A
 
 -- |Useful for partially applying an argument to `!` in reverse order.
 apply = flip (!)
@@ -48,3 +50,8 @@ drawingToSvg ((transform, shape, styles):xs) =
         transformedSvg = transformSvg transform shapeSvg
         styledSvg      = foldr styleSvg transformedSvg styles
     in styledSvg `mappend` drawingToSvg xs
+
+-- |Renders an `Svg` in valid HTML of given size in pixels.
+renderSvg :: Int -> Int -> Svg -> Text
+renderSvg w h svg_ = R.renderSvg $ foldr ($) (docTypeSvg svg_)
+                    [applyAttr A.width w, applyAttr A.height h]

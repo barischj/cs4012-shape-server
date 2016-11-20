@@ -15,7 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     DefaultRead, Server, Shapes, Svg
+  exposed-modules:     Server, Shapes, Svg
   build-depends:       base >= 4.7 && < 5,
                        blaze-svg >= 0.3 && < 0.4,
                        blaze-markup >= 0.7 && < 0.8,

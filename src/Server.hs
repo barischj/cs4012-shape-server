@@ -13,6 +13,3 @@ start = scotty 3000 $ do
     post "/svg" $ do
         input <- body
         html $ renderSvg 500 500 $ drawingToSvg $ read $ Ch.unpack input
-
-unpack :: Ch.ByteString -> String
-unpack = Ch.unpack

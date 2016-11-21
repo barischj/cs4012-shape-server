@@ -18,12 +18,14 @@
         <div id="result" class="flex"></div>
     </div>
     <script>
+        // Set some default text describing sn SVG
         inputElem = $("#input").val(
 "[" +
     "(Identity, Circle, [CX 50, CY 50, R 50, FillColor #123456])," +
-    "(Rotate 45, Square, [X 40, Y 20, Width 10, Height 10])" +
+    "(Compose (Rotate 10) (Rotate 10), Square, [X 40, Y 20, Width 10, Height 10])" +
 "]"
         )
+        // Send input text to the server and display the returned SVG
         function getSvg() {
             $.post("/svg", inputElem.val(), data => {
                 $("#result").html(data)

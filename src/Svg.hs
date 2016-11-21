@@ -14,29 +14,34 @@ apply = flip (!)
 -- |Applies an attribute to an `Svg`. The attribute is given as an
 -- `AttributeValue -> Attribute` e.g. `A.height` and an `AttributeValue`
 -- derived from an instance of `Show` e.g. `5`.
-applyAttr :: Show a => (AttributeValue -> Attribute) -> a -> Svg -> Svg
-applyAttr ava a = apply $ ava $ I.stringValue $ show a
+applyShowAttr :: Show a => (AttributeValue -> Attribute) -> a -> Svg -> Svg
+applyShowAttr ava a = apply $ ava $ I.stringValue $ show a
 
 -- |Applies a `Style` to an `Svg`.
 styleSvg :: Style -> Svg -> Svg
-styleSvg (CX          cx) = applyAttr A.cx          cx
-styleSvg (CY          cy) = applyAttr A.cy          cy
-styleSvg (X           x)  = applyAttr A.x           x
-styleSvg (Y           y)  = applyAttr A.y           y
-styleSvg (R           r)  = applyAttr A.r           r
-styleSvg (FillColor   c)  = applyAttr A.fill        c
-styleSvg (Height      h)  = applyAttr A.height      h
-styleSvg (StrokeColor c)  = applyAttr A.stroke      c
-styleSvg (StrokeWidth w)  = applyAttr A.strokeWidth w
-styleSvg (Width       w)  = applyAttr A.width       w
+styleSvg (CX          cx) = applyShowAttr A.cx          cx
+styleSvg (CY          cy) = applyShowAttr A.cy          cy
+styleSvg (X           x)  = applyShowAttr A.x           x
+styleSvg (Y           y)  = applyShowAttr A.y           y
+styleSvg (R           r)  = applyShowAttr A.r           r
+styleSvg (FillColor   c)  = applyShowAttr A.fill        c
+styleSvg (Height      h)  = applyShowAttr A.height      h
+styleSvg (StrokeColor c)  = applyShowAttr A.stroke      c
+styleSvg (StrokeWidth w)  = applyShowAttr A.strokeWidth w
+styleSvg (Width       w)  = applyShowAttr A.width       w
+
+-- |Returns the corresponding `AttributeValue`s for a `Transform`.
+tformAttrValue :: Transform -> [AttributeValue]
+tformAttrValue Identity                 = []
+tformAttrValue (Translate (Vector x y)) = [translate x y]
+tformAttrValue (Scale     (Vector x y)) = [scale x y]
+tformAttrValue (Compose t1 t2)          = concatMap tformAttrValue [t1, t2]
+tformAttrValue (Rotate a)               = [rotate a]
 
 -- |Applies a `Transform` to an `Svg`.
 transformSvg :: Transform -> Svg -> Svg
-transformSvg Identity                 = id
-transformSvg (Translate (Vector x y)) = apply $ A.transform $ translate x y
-transformSvg (Scale     (Vector x y)) = apply $ A.transform $ scale x y
-transformSvg (Compose t1 t2)          = transformSvg t2 . transformSvg t1
-transformSvg (Rotate a)               = apply $ A.transform $ rotate a
+transformSvg transform =
+    apply $ A.transform $ mconcat $ tformAttrValue transform
 
 -- |Converts a `Shape` to the corresponding `Svg`.
 shapeToSvg :: Shape -> Svg
@@ -51,9 +56,11 @@ drawingToSvg ((transform, shape, styles):xs) =
     let shapeSvg       = shapeToSvg shape
         transformedSvg = transformSvg transform shapeSvg
         styledSvg      = foldr styleSvg transformedSvg styles
+    -- `mappend` each SVG in the list together.
     in styledSvg `mappend` drawingToSvg xs
 
 -- |Renders an `Svg` in valid HTML of given size in pixels.
 renderSvg :: Int -> Int -> Svg -> Text
-renderSvg w h svg_ = R.renderSvg $ foldr ($) (docTypeSvg svg_)
-                         [applyAttr A.width w, applyAttr A.height h]
+renderSvg w h svg_ =
+    R.renderSvg $
+        applyShowAttr A.height h $ applyShowAttr A.width w $ docTypeSvg svg_

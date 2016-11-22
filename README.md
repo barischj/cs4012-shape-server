@@ -10,7 +10,7 @@ The existing Shapes language is in `Shapes.hs`. Though very little remains, only
 
 ## Usage
 
-`stack build && stack run`
+`stack build && stack exec shape-server-exe`
 
 Then visit `localhost:3000` which provides a web form for entering an SVG description and displaying the result.
 

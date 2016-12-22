@@ -61,6 +61,5 @@ drawingToSvg ((transform, shape, styles):xs) =
 
 -- |Renders an `Svg` in valid HTML of given size in pixels.
 renderSvg :: Int -> Int -> Svg -> Text
-renderSvg w h svg_ =
-    R.renderSvg $
-        applyShowAttr A.height h $ applyShowAttr A.width w $ docTypeSvg svg_
+renderSvg w h svg_ = R.renderSvg $
+    applyShowAttr A.height h $ applyShowAttr A.width w $ docTypeSvg svg_
